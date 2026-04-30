@@ -1,0 +1,11 @@
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+python-dotenv==1.1.1
+pydantic==2.11.7
+langchain==0.3.27
+langchain-google-genai==2.1.9
+langchain-pinecone==0.2.11
+pinecone==7.3.0
+twilio==9.8.0
+httpx==0.28.1
+pydantic-settings==2.10.1

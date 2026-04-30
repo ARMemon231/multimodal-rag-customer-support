@@ -1,0 +1,26 @@
+[
+  {
+    "product_id": "p-1001",
+    "product_name": "AeroFit Running Shoes",
+    "description": "Lightweight running shoes with breathable mesh upper and cushioned foam sole for daily training.",
+    "price": 89.99,
+    "category": "Footwear",
+    "tags": ["running", "mesh", "lightweight", "sports"]
+  },
+  {
+    "product_id": "p-1002",
+    "product_name": "TerraSteel Water Bottle 1L",
+    "description": "Double-wall insulated stainless steel bottle that keeps drinks cold for 24 hours.",
+    "price": 29.5,
+    "category": "Accessories",
+    "tags": ["bottle", "insulated", "outdoor", "steel"]
+  },
+  {
+    "product_id": "p-1003",
+    "product_name": "LumaDesk LED Lamp",
+    "description": "Adjustable desk lamp with touch controls, warm/cool brightness modes, and USB charging port.",
+    "price": 45.0,
+    "category": "Home Office",
+    "tags": ["lamp", "led", "desk", "lighting"]
+  }
+]
