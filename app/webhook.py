@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI, Form
+from fastapi.responses import JSONResponse, Response, PlainTextResponse
 from twilio.twiml.messaging_response import MessagingResponse
 
 from app.config import settings
@@ -15,18 +16,28 @@ rag = RAGService()
 memory = ConversationMemory()
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    return {"status": "running", "message": "Multimodal RAG Customer Support is live. Use POST /webhook/whatsapp"}
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/webhook/whatsapp")
+@app.post("/webhook/whatsapp", response_class=PlainTextResponse)
 def whatsapp_webhook(
     From: str = Form(...),
     Body: str = Form(default=""),
     NumMedia: str = Form(default="0"),
     MediaUrl0: str = Form(default=""),
-) -> str:
+) -> PlainTextResponse:
     response = MessagingResponse()
 
     is_image = int(NumMedia) > 0 and MediaUrl0
@@ -42,4 +53,4 @@ def whatsapp_webhook(
 
     response.message(result.answer)
     logger.info("user=%s image=%s sources=%s", From, is_image, len(result.sources))
-    return str(response)
+    return PlainTextResponse(content=str(response), media_type="application/xml")

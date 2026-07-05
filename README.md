@@ -62,8 +62,29 @@ python scripts/run_ingestion.py
 uvicorn app.webhook:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+## 🌐 Ngrok Setup (Local Tunnel)
+
+Twilio needs a public HTTPS URL — Ngrok creates a tunnel to your localhost.
+
+### Install Ngrok
+Download: https://ngrok.com/download
+
+### Setup Auth Token
+1. Sign up: https://dashboard.ngrok.com/signup
+2. Get token: https://dashboard.ngrok.com/get-started/your-authtoken
+3. Run:
+```bash
+ngrok config add-authtoken YOUR_AUTH_TOKEN
+```
+
+### Start Tunnel
+```bash
+ngrok http 8000
+```
+Copy the URL: `https://xxxx-xxxx.ngrok-free.dev`
+
 Configure Twilio webhook to:
-`POST https://<your-domain>/webhook/whatsapp`
+`POST https://xxxx-xxxx.ngrok-free.dev/webhook/whatsapp`
 
 ## Notes for production
 - Use a durable memory backend (Redis) instead of in-memory store.

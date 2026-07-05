@@ -9,3 +9,5 @@ pinecone==7.3.0
 twilio==9.8.0
 httpx==0.28.1
 pydantic-settings==2.10.1
+langchain-huggingface==0.1.2
+sentence-transformers==3.0.1

@@ -2,7 +2,8 @@ import logging
 from typing import Any
 
 from langchain.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 
@@ -27,24 +28,25 @@ Question:
 
 class RAGService:
     def __init__(self) -> None:
-        self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004", google_api_key=settings.google_api_key
-        )
+        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         pc = Pinecone(api_key=settings.pinecone_api_key)
         index = pc.Index(settings.pinecone_index_name)
         self.vectorstore = PineconeVectorStore(index=index, embedding=self.embeddings, namespace=settings.pinecone_namespace)
 
-        self.chat_llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", google_api_key=settings.google_api_key, temperature=0.1)
-        self.vision_llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", google_api_key=settings.google_api_key, temperature=0.1)
+        self.chat_llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", google_api_key=settings.google_api_key, temperature=0.1)
+        self.vision_llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", google_api_key=settings.google_api_key, temperature=0.1)
 
     def _retrieve(self, query: str) -> list[Any]:
-        return self.vectorstore.similarity_search_with_relevance_scores(query, k=settings.top_k)
+        return self.vectorstore.similarity_search_with_relevance_scores(
+            query, k=settings.top_k, namespace=settings.pinecone_namespace
+        )
 
     def answer_text(self, question: str, memory_context: str = "") -> RAGResult:
         hits = self._retrieve(question)
         filtered = [h for h in hits if h[1] >= settings.min_similarity]
         if not filtered:
-            return RAGResult(answer="I couldn't find that in our product catalog.", sources=[])
+            logger.warning("No relevant docs found in Pinecone for: %s", question)
+            return RAGResult(answer="I'm sorry, I don't have information about this product in our catalog. Please contact our support team for further assistance.", sources=[])
 
         context = "\n\n".join(doc.page_content for doc, _ in filtered)
         if memory_context:
